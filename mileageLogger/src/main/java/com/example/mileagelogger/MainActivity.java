@@ -1,0 +1,204 @@
+package com.example.mileagelogger;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        Spinner vehicle = (Spinner) findViewById(R.id.spVehicles);
+
+        vehicle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+         // this should update the miles traveled when end Miles loses focus
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        // code to execute when EditText loses focus
+                        calcmiles();
+
+                    }
+                }
+            });
+
+        Spinner veh = (Spinner) findViewById(R.id.spVehicles);
+        ArrayAdapter<?> adapter1 = ArrayAdapter.createFromResource(
+                this, R.array.vehicles, android.R.layout.simple_spinner_item);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        veh.setAdapter(adapter1);
+
+        Spinner use = (Spinner) findViewById(R.id.spUse);
+        ArrayAdapter<?> adapter2 = ArrayAdapter.createFromResource(
+                this, R.array.types, android.R.layout.simple_spinner_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        use.setAdapter(adapter2);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+
+        if (id == R.id.delteItem) {
+            // delete selected item from list
+            return true;
+        }
+        if (id == R.id.exxportData) {
+
+
+                    try {
+                        util u = new util();
+                        Context ctx = getApplicationContext();
+                        String response = u.saveDB("mileageTrakker.db", ctx);
+                        u.Showaction(response, ctx);
+
+
+                    } catch (Exception e) {
+                        String ex = e.toString();
+                    }
+            return true;
+        }
+        if (id == R.id.importDB) {
+
+            try{
+            util u = new util();
+            Context ctx = getApplicationContext();
+            String response = u.RestoreDB("mileageTrakker.db",ctx);
+            u.Showaction(response,ctx);
+            } catch (Exception e) {
+                String ex = e.toString();
+            }
+            return true;
+        }
+        if (id == R.id.saveRecord){
+
+            // save record to sqlite db here !
+            saveToDB();
+            clearScreen();
+        }
+        if (id == R.id.listDB){
+            Intent myIntent = new Intent(getBaseContext(), listTrips.class);
+            startActivityForResult(myIntent, 0);
+
+        }
+
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    private void saveToDB() {
+        SQLiteDatabase database = new mileageDBHelper(this).getReadableDatabase();
+        // get values from form
+        EditText dte = (EditText) findViewById(R.id.etDate);
+        EditText start = (EditText) findViewById(R.id.etSmiles);
+        EditText end = (EditText) findViewById(R.id.etEmiles);
+        TextView net = (TextView) findViewById(R.id.tvNetMiles);
+        Spinner veh = (Spinner) findViewById(R.id.spVehicles);
+        Spinner use = (Spinner) findViewById(R.id.spUse);
+        EditText ftype = (EditText) findViewById(R.id.etFtype);
+        EditText fqty = (EditText) findViewById(R.id.etFqty);
+        EditText fcost= (EditText) findViewById(R.id.etFcost);
+        TextView notes = (TextView) findViewById(R.id.etNotes);
+
+        String travelDate = dte.getText().toString();
+        int startMileage = Integer.parseInt(start.getText().toString());
+        int endMileage = Integer.parseInt(end.getText().toString());
+        int netMileage = Integer.parseInt(net.getText().toString());
+        int intSpinnerPosVeh = veh.getSelectedItemPosition();
+
+        String vehicle = veh.getItemAtPosition(intSpinnerPosVeh).toString();
+        int intSpinnerPosUse = veh.getSelectedItemPosition();
+        String usetype = use.getItemAtPosition(intSpinnerPosUse).toString();
+        String fueltype = ftype.getText().toString();
+        String fuelCost = String.format(fcost.getText().toString());
+        String fuelQty = String.format(fqty.getText().toString());
+        float fuelcost = Float.parseFloat(fuelCost);
+        float fuelqty = Float.parseFloat(fuelQty);
+        String comm = notes.getText().toString();
+
+
+        ContentValues values = new ContentValues();
+
+        values.put(LoggerDBManager.Mileage.COLUMN_DATE, travelDate);
+        values.put(LoggerDBManager.Mileage.COLUMN_SMILES , startMileage);
+        values.put(LoggerDBManager.Mileage.COLUMN_EMILES , endMileage);
+        values.put(LoggerDBManager.Mileage.COLUMN_NMILES , netMileage);
+        values.put(LoggerDBManager.Mileage.COLUMN_VEHICLE, vehicle);
+        values.put(LoggerDBManager.Mileage.COLUMN_TYPE, usetype);
+        values.put(LoggerDBManager.Mileage.COLUMN_NOTES, comm);
+        values.put(LoggerDBManager.Mileage.COLUMN_FUEL, fueltype);
+        values.put(LoggerDBManager.Mileage.COLUMN_FUELQTY, fuelqty);
+        values.put(LoggerDBManager.Mileage.COLUMN_FUELCOST,fuelcost);
+
+        long newRowId = database.insert(LoggerDBManager.Mileage.TABLE_NAME, null, values);
+
+        Toast.makeText(this, "The new Row Id is " + newRowId, Toast.LENGTH_LONG).show();
+        database.close();
+    }
+    public void clearScreen(){
+
+        EditText dte = (EditText) findViewById(R.id.etDate);
+        EditText start = (EditText) findViewById(R.id.etSmiles);
+        EditText end = (EditText) findViewById(R.id.etEmiles);
+        TextView net = (TextView) findViewById(R.id.tvNetMiles);
+        Spinner veh = (Spinner) findViewById(R.id.spVehicles);
+        Spinner use = (Spinner) findViewById(R.id.spUse);
+        TextView notes = (TextView) findViewById(R.id.etNotes);
+        EditText fuelTyp = (EditText) findViewById(R.id.etFtype);
+        EditText fuelcost = (EditText) findViewById(R.id.etFcost);
+        EditText fqty = (EditText) findViewById(R.id.etFqty);
+
+        dte.setText((""));
+        start.setText("");
+        end.setText("");
+        net.setText("");
+        notes.setText("");
+
+    }
+    private void calcmiles(){
+
+        // calculate miles driven
+
+        EditText start = (EditText) findViewById(R.id.etSmiles);
+        EditText end = (EditText) findViewById(R.id.etEmiles);
+        TextView net = (TextView) findViewById(R.id.tvNetMiles);
+
+        int endMiles = Integer.parseInt(end.getText().toString());
+        int startMiles = Integer.parseInt(start.getText().toString());
+        int netmiles = endMiles - startMiles;
+        String sNetMiles = String.valueOf(netmiles);
+
+        net.setText(sNetMiles);
+
+
+    }
+}
