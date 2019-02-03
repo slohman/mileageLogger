@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.mileagelogger.MainActivity">
+    <item
+        android:id="@+id/saveRecord"
+        android:orderInCategory="101"
+        android:title="Save Record"
+        android:visible="true" />
+    <item
+        android:id="@+id/delteItem"
+        android:enabled="true"
+        android:orderInCategory="102"
+        android:title="Delete Item"
+        android:visible="true" />
+    <item
+        android:id="@+id/exxportData"
+        android:enabled="true"
+        android:orderInCategory="103"
+        android:title="Export DB"
+        android:visible="true" />
+    <item
+        android:id="@+id/importDB"
+        android:enabled="true"
+        android:orderInCategory="104"
+        android:title="Import DB"
+        android:visible="true" />
+    <item
+        android:id="@+id/listDB"
+        android:enabled="true"
+        android:orderInCategory="105"
+        android:title="List Trips"
+        android:visible="true" />
+</menu>
