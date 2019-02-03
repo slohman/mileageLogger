@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">MileageLogger</string>
     <string name="action_settings">Settings</string>
-</resources>
+    <string name="netMiles">Net</string>
+    <string name="date">Date</string>
+    <string name="StartMiles">Start</string>
+    <string name="EndMiles">End</string>
+    <string name="Vehicle">Vehicle</string>
+    <string name="use">Use</string>
+    <string name="fuel">Fuel</string>
+    <string name="fuelQty">Fuel Qty</string>
+    <string name="fuelCost">Fuel$</string>
+
+
+
+
+
+    </resources>
