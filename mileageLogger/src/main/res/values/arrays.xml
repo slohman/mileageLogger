@@ -8,12 +8,26 @@
 
     </string-array>
 
-    <string-array name="types">
+    <string-array name="uses">
 
-        <item>Business</item>
-        <item>Personal</item>
-        <item>FedEx</item>
+    <item>Business</item>
+    <item>Personal</item>
+    <item>FedEx</item>
 
     </string-array>
+
+
+
+
+        <string-array name="fuletyp">
+
+            <item>H2</item>
+            <item>87 Oct</item>
+            <item>89 Oct</item>
+            <item>91+ Oct</item>
+            <item>Diesel</item>
+        </string-array>
+
+
 
 </resources>

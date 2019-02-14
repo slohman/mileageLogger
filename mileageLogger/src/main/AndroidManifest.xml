@@ -11,15 +11,15 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/deliverytruck"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Base.V26.Theme.AppCompat">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".MainActivity">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,8 +28,13 @@
         </activity>
         <activity
             android:name=".listTrips"
+>
 
-            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".showtrip">
+
+
 
         </activity>
     </application>

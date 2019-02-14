@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,28 +15,71 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
+public class MainActivity extends AppCompatActivity {
+    final Calendar myCalendar = Calendar.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+       // Toolbar toolbar = findViewById(R.id.toolbar);
+      //  setSupportActionBar(toolbar);
 
-        Spinner vehicle = (Spinner) findViewById(R.id.spVehicles);
+        EditText endmiles = (EditText)findViewById(R.id.etEmiles);
 
-        vehicle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        Bundle b = new Bundle();
+
+        if (!b.isEmpty()){
+            // ge the data and populate the form for an Update
+
+            int tripNo = b.getInt("trip");
+            String tripDate = b.getString("tripDate");
+            int startMiles = b.getInt("start");
+            int endMiles = b.getInt("end");
+            int netMiles = b.getInt("net");
+            String vehicle = b.getString("veh");
+            String useType = b.getString("usetype");
+            String fuelType = b.getString("fueltype");
+            float fqty = b.getFloat("fuelqty");
+            float fcost = b.getFloat("fuelcost");
+            String tripNotes= b.getString("notes");
+
+            EditText tdate = (EditText)findViewById(R.id.etDate);
+            tdate.setText(tripDate);
+
+            Spinner veh = (Spinner) findViewById(R.id.spVehicles);
+            setSpinText(veh,vehicle);
+
+        }
+
+        endmiles.setOnFocusChangeListener(new View.OnFocusChangeListener() {
          // this should update the miles traveled when end Miles loses focus
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
+                    if (!hasFocus) {
                         // code to execute when EditText loses focus
-                        calcmiles();
+                        EditText start = (EditText) findViewById(R.id.etSmiles);
+                        EditText end = (EditText) findViewById(R.id.etEmiles);
+                        TextView net = (TextView) findViewById(R.id.tvNetMiles);
+
+                        int endMiles = Integer.parseInt(end.getText().toString());
+                        int startMiles = Integer.parseInt(start.getText().toString());
+                        int netmiles = endMiles - startMiles;
+                        String sNetMiles = String.valueOf(netmiles);
+
+                        net.setText(sNetMiles);
 
                     }
                 }
             });
+
+        DatePickerHelper assessmentDueDateHelper = new DatePickerHelper(MainActivity.this,
+                (TextView) findViewById(R.id.etDate));
+
+
 
         Spinner veh = (Spinner) findViewById(R.id.spVehicles);
         ArrayAdapter<?> adapter1 = ArrayAdapter.createFromResource(
@@ -47,9 +89,29 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner use = (Spinner) findViewById(R.id.spUse);
         ArrayAdapter<?> adapter2 = ArrayAdapter.createFromResource(
-                this, R.array.types, android.R.layout.simple_spinner_item);
+                this, R.array.uses, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         use.setAdapter(adapter2);
+
+        Spinner ftype = (Spinner) findViewById(R.id.spFtype);
+        ArrayAdapter<?> adapter3 = ArrayAdapter.createFromResource(
+                this, R.array.fuletyp, android.R.layout.simple_spinner_item);
+        adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ftype.setAdapter(adapter3);
+
+
+
+    }
+
+    public void setSpinText(Spinner spin, String text)
+    {
+        for(int i= 0; i < spin.getAdapter().getCount(); i++)
+        {
+            if(spin.getAdapter().getItem(i).toString().contains(text))
+            {
+                spin.setSelection(i);
+            }
+        }
 
     }
 
@@ -124,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         TextView net = (TextView) findViewById(R.id.tvNetMiles);
         Spinner veh = (Spinner) findViewById(R.id.spVehicles);
         Spinner use = (Spinner) findViewById(R.id.spUse);
-        EditText ftype = (EditText) findViewById(R.id.etFtype);
+        Spinner ftype = (Spinner) findViewById(R.id.spFtype);
         EditText fqty = (EditText) findViewById(R.id.etFqty);
         EditText fcost= (EditText) findViewById(R.id.etFcost);
         TextView notes = (TextView) findViewById(R.id.etNotes);
@@ -138,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         String vehicle = veh.getItemAtPosition(intSpinnerPosVeh).toString();
         int intSpinnerPosUse = veh.getSelectedItemPosition();
         String usetype = use.getItemAtPosition(intSpinnerPosUse).toString();
-        String fueltype = ftype.getText().toString();
+        String fueltype =  ftype.getItemAtPosition(intSpinnerPosUse).toString();
         String fuelCost = String.format(fcost.getText().toString());
         String fuelQty = String.format(fqty.getText().toString());
         float fuelcost = Float.parseFloat(fuelCost);
@@ -173,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         Spinner veh = (Spinner) findViewById(R.id.spVehicles);
         Spinner use = (Spinner) findViewById(R.id.spUse);
         TextView notes = (TextView) findViewById(R.id.etNotes);
-        EditText fuelTyp = (EditText) findViewById(R.id.etFtype);
+        Spinner ftype = (Spinner) findViewById(R.id.spFtype);
         EditText fuelcost = (EditText) findViewById(R.id.etFcost);
         EditText fqty = (EditText) findViewById(R.id.etFqty);
 
@@ -183,6 +245,12 @@ public class MainActivity extends AppCompatActivity {
         net.setText("");
         notes.setText("");
 
+    }
+    public void updateLabel() {
+        String myFormat = "MM/dd/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        EditText dte = (EditText) findViewById(R.id.etDate);
+        dte.setText(sdf.format(myCalendar.getTime()));
     }
     private void calcmiles(){
 
@@ -201,4 +269,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 }
+
