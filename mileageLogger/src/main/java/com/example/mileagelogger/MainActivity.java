@@ -20,43 +20,28 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    int TripID = 0;
     final Calendar myCalendar = Calendar.getInstance();
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
        // Toolbar toolbar = findViewById(R.id.toolbar);
       //  setSupportActionBar(toolbar);
 
+
+
+        Bundle b = this.getIntent().getExtras();
         EditText endmiles = (EditText)findViewById(R.id.etEmiles);
+        loadSpinners();
+         TripID = fillForm(b);
 
-        Bundle b = new Bundle();
 
-        if (!b.isEmpty()){
-            // ge the data and populate the form for an Update
 
-            int tripNo = b.getInt("trip");
-            String tripDate = b.getString("tripDate");
-            int startMiles = b.getInt("start");
-            int endMiles = b.getInt("end");
-            int netMiles = b.getInt("net");
-            String vehicle = b.getString("veh");
-            String useType = b.getString("usetype");
-            String fuelType = b.getString("fueltype");
-            float fqty = b.getFloat("fuelqty");
-            float fcost = b.getFloat("fuelcost");
-            String tripNotes= b.getString("notes");
-
-            EditText tdate = (EditText)findViewById(R.id.etDate);
-            tdate.setText(tripDate);
-
-            Spinner veh = (Spinner) findViewById(R.id.spVehicles);
-            setSpinText(veh,vehicle);
-
-        }
-
-        endmiles.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-         // this should update the miles traveled when end Miles loses focus
+            endmiles.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                // this should update the miles traveled when end Miles loses focus
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (!hasFocus) {
@@ -76,10 +61,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        DatePickerHelper assessmentDueDateHelper = new DatePickerHelper(MainActivity.this,
-                (TextView) findViewById(R.id.etDate));
+            DatePickerHelper assessmentDueDateHelper = new DatePickerHelper(MainActivity.this,
+                    (TextView) findViewById(R.id.etDate));
 
 
+
+
+
+    }
+    private void loadSpinners(){
 
         Spinner veh = (Spinner) findViewById(R.id.spVehicles);
         ArrayAdapter<?> adapter1 = ArrayAdapter.createFromResource(
@@ -98,9 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 this, R.array.fuletyp, android.R.layout.simple_spinner_item);
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ftype.setAdapter(adapter3);
-
-
-
     }
 
     public void setSpinText(Spinner spin, String text)
@@ -164,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.saveRecord){
 
             // save record to sqlite db here !
-            saveToDB();
+            String typ = "New";
+            saveToDB(typ,TripID);
             clearScreen();
         }
         if (id == R.id.listDB){
@@ -173,11 +161,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
         return super.onOptionsItemSelected(item);
 
     }
 
-    private void saveToDB() {
+    private void saveToDB(String typ, int TripID) {
         SQLiteDatabase database = new mileageDBHelper(this).getReadableDatabase();
         // get values from form
         EditText dte = (EditText) findViewById(R.id.etDate);
@@ -221,10 +210,18 @@ public class MainActivity extends AppCompatActivity {
         values.put(LoggerDBManager.Mileage.COLUMN_FUELQTY, fuelqty);
         values.put(LoggerDBManager.Mileage.COLUMN_FUELCOST,fuelcost);
 
-        long newRowId = database.insert(LoggerDBManager.Mileage.TABLE_NAME, null, values);
+        if (TripID == 0) {
+            long newRowId = database.insert(LoggerDBManager.Mileage.TABLE_NAME, null, values);
+            Toast.makeText(this, "The new Row Id is " + newRowId, Toast.LENGTH_LONG).show();
+            database.close();
+        }else{
 
-        Toast.makeText(this, "The new Row Id is " + newRowId, Toast.LENGTH_LONG).show();
-        database.close();
+
+            long rowUpdated = database.update(LoggerDBManager.Mileage.TABLE_NAME, values, "_id = " + TripID,null );
+            Toast.makeText(this, " Updated Row " + rowUpdated, Toast.LENGTH_LONG).show();
+            database.close();
+        }
+
     }
     public void clearScreen(){
 
@@ -244,6 +241,9 @@ public class MainActivity extends AppCompatActivity {
         end.setText("");
         net.setText("");
         notes.setText("");
+        fuelcost.setText("");
+        fqty.setText("");
+        ftype.setTag("");
 
     }
     public void updateLabel() {
@@ -268,6 +268,74 @@ public class MainActivity extends AppCompatActivity {
         net.setText(sNetMiles);
 
 
+    }
+    public int fillForm(Bundle b){
+
+
+        if (b != null){ // loaded this from the list for an update
+            // ge the data and populate the form for an Update
+
+            TripID = b.getInt("trip");
+            String tripDate = b.getString("tripDate");
+            String startMiles = b.getString("start");
+            String endMiles = b.getString("end");
+            String netMiles = b.getString("net");
+            String vehicle = b.getString("veh");
+            String useType = b.getString("usetype");
+            String fuelType = b.getString("fueltype");
+            String fuelqty = b.getString("fuelqty");
+            String fuelcost = b.getString("fuelcost");
+            String tripNotes= b.getString("notes");
+
+            EditText dte = (EditText) findViewById(R.id.etDate);
+            dte.setText(tripDate);
+            EditText start = (EditText) findViewById(R.id.etSmiles);
+            start.setText(String.valueOf(startMiles));
+            EditText end = (EditText) findViewById(R.id.etEmiles);
+            end.setText(String.valueOf(endMiles));
+            TextView net = (TextView) findViewById(R.id.tvNetMiles);
+            net.setText(String.valueOf(netMiles));
+
+            Spinner veh = (Spinner) findViewById(R.id.spVehicles);
+            String[] vehs = getResources().getStringArray(R.array.vehicles);
+            SetSpinnerSelection(veh,vehs,vehicle);
+
+
+
+            Spinner use = (Spinner) findViewById(R.id.spUse);
+            String[] uses= getResources().getStringArray(R.array.uses);
+            SetSpinnerSelection(use,uses,useType);
+
+
+            Spinner ftype = (Spinner) findViewById(R.id.spUse);
+            String[] fuels = getResources().getStringArray(R.array.fuletyp);
+            SetSpinnerSelection(ftype,fuels,fuelType);
+
+
+            EditText fqty = (EditText) findViewById(R.id.etFqty);
+            fqty.setText(String.valueOf(fuelqty));
+            EditText fcost= (EditText) findViewById(R.id.etFcost);
+            fcost.setText(String.valueOf(fuelcost));
+            TextView notes = (TextView) findViewById(R.id.etNotes);
+            notes.setText(tripNotes);
+
+
+
+
+            return TripID;
+        }else{
+            int tripID = 0;
+            return tripID;
+        }
+
+    }
+
+    public void SetSpinnerSelection(Spinner spinner,String[] array,String text) {
+        for(int i=0;i<array.length;i++) {
+            if(array[i].equals(text)) {
+                spinner.setSelection(i);
+            }
+        }
     }
 
 }

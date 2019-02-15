@@ -49,9 +49,9 @@ public class listTrips extends AppCompatActivity {
                 c1.moveToPosition(position);
                 b.putInt("trip", c1.getInt(c1.getColumnIndex("_id")));
                 b.putString("tripDate", c1.getString(c1.getColumnIndex("dte")));
-                b.putInt("start", c1.getInt(c1.getColumnIndex("smiles")));
-                b.putInt("end", c1.getInt(c1.getColumnIndex("emiles")));
-                b.putInt("net", c1.getInt(c1.getColumnIndex("nmiles")));
+                b.putString("start", c1.getString(c1.getColumnIndex("smiles")));
+                b.putString("end", c1.getString(c1.getColumnIndex("emiles")));
+                b.putString("net", c1.getString(c1.getColumnIndex("nmiles")));
                 b.putString("veh", c1.getString(c1.getColumnIndex("vehicle")));
                 b.putString("usetype", c1.getString(c1.getColumnIndex("type")));
                 b.putString("fueltype", c1.getString(c1.getColumnIndex("fuel")));
