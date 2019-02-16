@@ -17,6 +17,9 @@ public class mileageDBHelper extends SQLiteOpenHelper {
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
             sqLiteDatabase.execSQL(LoggerDBManager.Mileage.CREATE_TABLE);
+            sqLiteDatabase.execSQL(LoggerDBManager.Mileage.CREATE_TABLEFUEL);
+            sqLiteDatabase.execSQL(LoggerDBManager.Mileage.CREATE_TABLEUSES);
+            sqLiteDatabase.execSQL(LoggerDBManager.Mileage.CREATE_TABLEVEH);
         }
 
         @Override

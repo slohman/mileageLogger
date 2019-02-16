@@ -33,9 +33,13 @@
         </activity>
         <activity
             android:name=".showtrip">
+        </activity>
 
-
-
+        <activity
+            android:name=".listVehicles">
+        </activity>
+        <activity
+            android:name=".vehMaint">
         </activity>
     </application>
 

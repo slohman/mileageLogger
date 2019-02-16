@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             // delete selected item from list
             return true;
         }
-        if (id == R.id.exxportData) {
+        if (id == R.id.exportData) {
 
 
                     try {
@@ -158,9 +158,11 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.listDB){
             Intent myIntent = new Intent(getBaseContext(), listTrips.class);
             startActivityForResult(myIntent, 0);
-
         }
-
+        if (id == R.id.listVEH){
+            Intent myIntent = new Intent(getBaseContext(), listVehicles.class);
+            startActivityForResult(myIntent, 0);
+        }
 
         return super.onOptionsItemSelected(item);
 

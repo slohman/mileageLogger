@@ -14,7 +14,7 @@
         android:title="Delete Item"
         android:visible="true" />
     <item
-        android:id="@+id/exxportData"
+        android:id="@+id/exportData"
         android:enabled="true"
         android:orderInCategory="103"
         android:title="Export DB"
@@ -31,6 +31,11 @@
         android:orderInCategory="105"
         android:title="List Trips"
         android:visible="true" />
-
+    <item
+        android:id="@+id/listVEH"
+        android:enabled="true"
+        android:orderInCategory="105"
+        android:title="List Vehicles"
+        android:visible="true" />
 
 </menu>

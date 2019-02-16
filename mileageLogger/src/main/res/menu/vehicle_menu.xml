@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.mileagelogger.MainActivity">
+    <item
+        android:id="@+id/addVehicle"
+        android:orderInCategory="101"
+        android:title="Add Vehicle"
+        android:visible="true" />
+    <item
+        android:id="@+id/editVehicle"
+        android:enabled="true"
+        android:orderInCategory="102"
+        android:title="Edit Vehicle"
+        android:visible="true" />
+    <item
+        android:id="@+id/delVehicle"
+        android:enabled="true"
+        android:orderInCategory="103"
+        android:title="Delete Vehicle"
+        android:visible="true" />
+</menu>

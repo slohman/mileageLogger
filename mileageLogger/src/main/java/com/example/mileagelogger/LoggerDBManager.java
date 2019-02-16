@@ -19,7 +19,10 @@ public class LoggerDBManager {
         public static final String COLUMN_FUEL = "fuel";
         public static final String COLUMN_FUELQTY = "fuelQTY";
         public static final String COLUMN_FUELCOST = "fuelcost";
-
+        public static final String COLUMN_VEHNAME = "vehName";
+        public static final String COLUMN_USETYPE = "useType";
+        public static final String COLUMN_FUELTYPE = "fuelType";
+        public static final String COLUMN_VEHTYPE = "vehType";
 
         public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " +
                 TABLE_NAME + " (" +
@@ -35,10 +38,24 @@ public class LoggerDBManager {
                 COLUMN_FUELCOST + " REAL," +
                 COLUMN_NOTES+ " TEXT" + ")";
 
+        public static final String CREATE_TABLEFUEL = "CREATE TABLE IF NOT EXISTS " +
+                "fuelTPYES" + " (" +
+                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_FUELTYPE + " TEXT " + ")";
 
 
-    }
+        public static final String CREATE_TABLEUSES = "CREATE TABLE IF NOT EXISTS " +
+                "uses" + " (" +
+                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_USETYPE + " TEXT " + ")";
 
+        public static final String CREATE_TABLEVEH = "CREATE TABLE IF NOT EXISTS " +
+                "vehicles" + " (" +
+                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_VEHNAME + " TEXT, " +
+                COLUMN_VEHTYPE + " TEXT " + ")";
+
+ }
 
 
 
